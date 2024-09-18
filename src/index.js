@@ -9,8 +9,13 @@ const PORT = process.env.PORT
 app.use(express.json())
 app.post('/assist', async (req, res) => {
 	const client = new GoogleAssistant(deviceCredentials)
-	const resp = await client.assist(req.body.input)
-	res.json({ response: resp, requestBody: req.body })
+	if (!req.body.input) {
+		res.status(404).json({ error: 'must provide input value' })
+		res.send()
+	} else {
+		const resp = await client.assist(req.body.input)
+		res.json({ response: resp, requestBody: req.body })
+	}
 })
 
 app.listen(PORT, () => {
