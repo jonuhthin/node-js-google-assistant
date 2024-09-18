@@ -1,0 +1,20 @@
+{
+	"name": "node-assistant",
+	"version": "1.0.0",
+	"description": "a web server to receive requests to send to Google Assistant",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@grpc/grpc-js": "^1.11.2",
+		"@grpc/proto-loader": "^0.7.13",
+		"express": "^4.21.0",
+		"google-auth-library": "^9.14.1",
+		"google-proto-files": "^4.2.0",
+		"googleapis": "^144.0.0",
+		"lodash": "^4.17.21"
+	}
+}

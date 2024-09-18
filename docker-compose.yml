@@ -1,0 +1,11 @@
+# version: '3'
+services:
+  node-assistant:
+    tty: true
+    build: .
+    volumes:
+      - ${CREDENTIALS_PATH}:/usr/src/app/credentials.json
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
