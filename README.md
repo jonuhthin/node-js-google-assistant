@@ -9,6 +9,7 @@
 - search for and enable Google Assistant API
 - go back to `APIs & Services`
 - - if you haven't enabled the consent screen already, do so by following the prompts. Make sure to add the `Google Assistant API` as a scope and yourself as a test user (now you don't have to push the app to production)
+  - NOTE: if you don't submit the app for verification, the refresh token ends up expiring after 7 days. The app shouldn't actually need to be verified
 - select create credentials
   - for `OAuth Client Id`
   - for `application type` I chose Desktop

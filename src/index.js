@@ -13,8 +13,13 @@ app.post('/assist', async (req, res) => {
 		res.status(404).json({ error: 'must provide input value' })
 		res.send()
 	} else {
-		const resp = await client.assist(req.body.input)
-		res.json({ response: resp, requestBody: req.body })
+		try {
+			const resp = await client.assist(req.body.input)
+			res.json({ response: resp, requestBody: req.body })
+		} catch (err) {
+			console.log(err)
+			res.status(500).json(err)
+		}
 	}
 })
 
