@@ -1,7 +1,6 @@
 .vscode
 node_modules
-*secret*.json
-*credentials*.json
+*.json
 env
 venv
 .env

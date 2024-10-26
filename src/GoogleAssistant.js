@@ -2,10 +2,13 @@
 'use strict'
 
 const grpc = require('@grpc/grpc-js')
-const auth = require('google-auth-library')
+const { OAuth2Client } = require('google-auth-library')
 const protoLoader = require('@grpc/proto-loader')
 const protos = require('google-proto-files')
 const path = require('path')
+
+const credentials = require('../credentials.json')['web']
+console.log(credentials)
 
 // Load the proto file
 const PROTO_PATH = protos.getProtoPath(
@@ -24,22 +27,31 @@ const assistantProto =
 	grpc.loadPackageDefinition(packageDefinition).google.assistant.embedded
 		.v1alpha2
 
+const redirect_uri = `http://localhost:${process.env.PORT}/code`
 module.exports = class GoogleAssistant {
-	constructor(credentials) {
+	constructor() {
 		GoogleAssistant.prototype.endpoint_ = 'embeddedassistant.googleapis.com'
-		this.client = this.createClient_(credentials)
+		this.oauth2Client = new OAuth2Client(
+			credentials.client_id,
+			credentials.client_secret,
+			redirect_uri
+		)
+
+		// Generate the consent URL
+		const authUrl = this.oauth2Client.generateAuthUrl({
+			access_type: 'offline',
+			scope: ['https://www.googleapis.com/auth/assistant-sdk-prototype'],
+			redirect_uri
+		});
+
+		console.log('Authorize this app by visiting this URL:', authUrl);
 		this.locale = 'en-US'
 		this.deviceModelId = process.env.DEVICE_MODEL_ID
 		this.deviceInstanceId = process.env.DEVICE_INSTANCE_ID
 	}
-	createClient_(credentials) {
-		const refreshCredentials = new auth.UserRefreshClient(
-			credentials.client_id,
-			credentials.client_secret,
-			credentials.refresh_token
-		)
+	async createClient() {
 		const callCredentials =
-			grpc.credentials.createFromGoogleCredential(refreshCredentials)
+			grpc.credentials.createFromGoogleCredential(this.oauth2Client)
 		const sslCredentials = grpc.credentials.createSsl()
 		const combinedCredentials = grpc.credentials.combineChannelCredentials(
 			sslCredentials,
@@ -55,6 +67,7 @@ module.exports = class GoogleAssistant {
 	}
 
 	async assist(input) {
+		const client = await this.createClient()
 		const config = {
 			text_query: input,
 			debug_config: {
@@ -75,7 +88,7 @@ module.exports = class GoogleAssistant {
 		}
 
 		// Call the Assist method
-		const conversation = this.client.assist()
+		const conversation = client.assist()
 		return new Promise((resolve, reject) => {
 			let response = {}
 			conversation.on('data', (data) => {
