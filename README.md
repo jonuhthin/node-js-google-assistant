@@ -12,30 +12,10 @@
   - NOTE: if you don't submit the app for verification, the refresh token ends up expiring after 7 days. The app shouldn't actually need to be verified
 - select create credentials
   - for `OAuth Client Id`
-  - for `application type` I chose Desktop
+  - for `application type`, use `Web application`
+  - add a redirect uri of `http://localhost:<PORT>/code` for the port you plan on using
 - download client_secret JSON
 - I renamed mine to client_secret.json
-
-## get token
-
-google's oauth lib tool seems to be the easiest way to do this:
-
-I had to use Python 3.5 for this.
-
-1. you might want to use a virtual environment for this:
-
-```sh
-python -m venv venv
-. venv/bin/activate #or venv/Scripts/activate for Windows
-which python #make sure you're in the virtual env
-```
-
-2. install google-auth-oauthlib to fetch token info (replace client_secret.json w/ the path to your secret file downloaded previously)
-
-```sh
-python -m pip install --upgrade "google-auth-oauthlib[tool]" --trusted-host pypi.python.org
-google-oauthlib-tool --scope https://www.googleapis.com/auth/assistant-sdk-prototype --client-secrets client_secret.json --credentials credentials.json --save
-```
 
 ## register device model
 
@@ -76,6 +56,8 @@ use .env.template as starter:
 ```sh
 docker compose up -d
 ```
+> this should output a url for authentication in the logs (`docker logs <CONTAINER NAME>`). If you have a browser installed on the server running the container and configured the redirect uri correctly in the console, the code should automatically be read by the express server. 
+- if you don't have a browser available, you can open the url on another computer and you should see the browser try to redirect to `http://localhost:3000/code?code=<SOME_CODE>`. You can manually send a get request via curl or your browser with the server's IP in place of localhost:3000 and it will be authenticated.
 
 ### Node (v20)
 
