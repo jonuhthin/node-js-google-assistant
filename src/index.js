@@ -24,6 +24,7 @@ app.post('/assist', async (req, res) => {
 		res.send()
 	} else {
 		try {
+      console.log(req.body.input)
 			const resp = await client.assist(req.body.input)
 			res.json({ response: resp, requestBody: req.body })
 		} catch (err) {
