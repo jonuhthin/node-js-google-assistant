@@ -40,6 +40,7 @@ module.exports = class GoogleAssistant {
 		// Generate the consent URL
 		const authUrl = this.oauth2Client.generateAuthUrl({
 			access_type: 'offline',
+      prompt: 'consent',
 			scope: ['https://www.googleapis.com/auth/assistant-sdk-prototype'],
 			redirect_uri
 		});
